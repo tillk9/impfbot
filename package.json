@@ -1,0 +1,17 @@
+{
+  "name": "impfbot-sh",
+  "version": "1.0.0",
+  "description": "Buchung eines Impftermins in SH",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "puppeteer": "^8.0.0",
+    "puppeteer-extra": "3.1.18",
+    "puppeteer-extra-plugin-stealth": "^2.7.6"
+  },
+  "author": "Till Ebsen",
+  "license": "ISC"
+}
