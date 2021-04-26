@@ -1,4 +1,8 @@
-const link = "https://www.impfen-sh.de/sh/start/termine?mt=eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0IjoibXQiLCJpIjoic2giLCJjIjpbeyJmaXJzdE5hbWUiOiJJbGthIiwiYmlydGhkYXRlIjoiMjMuMDIuMTk2NiIsInRhZyI6WyJnMSJdLCJpZCI6MH1dLCJlIjoiaW5mb0BtYW5kYW50ZW5wbHVzLmRlIiwiaWF0IjoxNjE5MTgwNzY1LCJleHAiOjE2MTkxODc5NjV9.AXWbpVO9umIWA0adXGXE9tvvhunn_mMe5Ne8j_wC-7ghTRz9Pp4VOwPayKZY48kQ5B3f7c5EeHEm5M4gqHnQ6k_hAVzfs8NSUN42AUUVJJizdWNPr0JaNraoBHmnsTxTorHI6qiDf1XT-s2O5iiCRl4BhO1BaTOvJUZC00bhIkyaLVeK"
+// Mode 1 = Über die Übersichtsseite
+// Mode 2 = Über die Standortseite
+const mode = 2
+
+const link = "https://www.impfen-sh.de/sh/start/termine?mt=eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0IjoibXQiLCJpIjoic2giLCJjIjpbeyJmaXJzdE5hbWUiOiJJbGthIiwiYmlydGhkYXRlIjoiMjMuMDIuMTk2NiIsInRhZyI6WyJnMSJdLCJpZCI6MH1dLCJlIjoiaW5mb0BtYW5kYW50ZW5wbHVzLmRlIiwiaWF0IjoxNjE5NDMzMDE4LCJleHAiOjE2MTk0NDAyMTh9.AJoubNrbM3xObmJrmdj47z6sOwoC4ECp2Aa97XivPp1VJ7gQGTlJbjG5CKRkvfpuluI4IJ9ff2VjawdQzIsMGc_GAGseMe4_JjN5V5hgQ9Bli-B45eWGTNMxXWAovVy65bbgWIsUPtvt98QPkGZjs7cwAejTVR-PO31GzgwHZgeBRMyc"
 
 const locations = [
     {
@@ -93,7 +97,8 @@ const locations = [
     },
     {
         name:"Stormarn 3, 21465 Reinbek",
-        wunschLocation:true
+        wunschLocation:true,
+        url:"https://www.impfen-sh.de/sh/a/5fe2078d8d61ce7b0d74fa0e/s/602bb951d72359190fc4ca6b?lang=en"
     },
     {
         name:"Pinneberg 2, 25337 Elmshorn",
@@ -145,14 +150,18 @@ run = async () => {
     await page.goto(link);
     
     
-    
-    await page.goto("https://www.impfen-sh.de/sh/a/5fe2078d8d61ce7b0d74fa0e/s/602bb951d72359190fc4ca6b?lang=en");
-    
+    if (mode === 1) {
+        await waitForAppointment(page)
+        await awaitAndClick(page,selectors.termin_reservieren)  
+        
+    }
 
-    // await waitForAppointment(page)
-    await waitForReservieren(page)
-    
-    // await awaitAndClick(page,selectors.termin_reservieren)  
+
+    if (mode === 2) {
+        await page.goto(locations.find(l=>l.wunschLocation).url);        
+        await waitForReservieren(page)
+    }
+
 
     await page.waitForTimeout(15*60*1000)
 
@@ -180,7 +189,7 @@ const waitForAppointment = async (page) => {
             await foundElement.click();
         }
         else {
-            await page.waitForTimeout(1*1000)
+            await page.waitForTimeout(1*200)
 
             await page.reload({ waitUntil: ["networkidle0", "domcontentloaded"] });
             await waitForAppointment(page)
